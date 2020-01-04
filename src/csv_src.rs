@@ -12,18 +12,19 @@ pub(crate) fn read_csv<R: Read>(reader: R) -> Result<Vec<Word>, Error> {
 mod tests {
     use super::*;
     use test_case::test_case;
-    #[test_case(&with_header(
+    type RowArray<'a> = [[&'a str; 3]];
+    #[test_case(
             &[
-            ["abc","word_name","desc"]
-            ]
-            ) ,
+                ["abc","word_name","desc"]
+            ],
             vec![
-            Word::new("abc","word_name","desc")
+                Word::new("abc","word_name","desc")
             ]; "1 rows"
         )]
-    #[test_case(&with_header(&[]) ,vec![]; "nothing rows")]
-    fn read_csv_works(given: &str, expected: Vec<Word>) -> Result<(), Error> {
-        let cursor = Cursor::new(given);
+    #[test_case(&[] ,vec![]; "nothing rows")]
+    fn read_csv_works(given: &RowArray, expected: Vec<Word>) -> Result<(), Error> {
+        let src = &with_header(given);
+        let cursor = Cursor::new(src);
         let actulal = read_csv(cursor)?;
         assert_eq!(&expected[..], &actulal[..]);
         Ok(())
@@ -35,7 +36,7 @@ mod tests {
         assert_eq!(expected, format!("{}", result.err().unwrap()));
     }
 
-    fn with_header(rows: &[[&str; 3]]) -> String {
+    fn with_header(rows: &RowArray) -> String {
         [&[["key", "name", "description"]], rows]
             .concat()
             .iter()
