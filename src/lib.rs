@@ -9,9 +9,9 @@ extern crate serde_json;
 #[macro_use]
 extern crate lazy_static;
 
+mod comark_dest;
 mod csv_src;
 mod error;
-mod markdown_dest;
 mod word;
 
 pub use crate::error::*;
