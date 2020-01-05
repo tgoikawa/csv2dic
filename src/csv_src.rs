@@ -18,7 +18,7 @@ mod tests {
                 ["abc","word_name","desc"]
             ],
             vec![
-                Word::new("abc","word_name","desc")
+                Word::new("abc".to_string(),"word_name".to_string(),"desc".to_string())
             ]; "1 rows"
         )]
     #[test_case(&[] ,vec![]; "nothing rows")]
