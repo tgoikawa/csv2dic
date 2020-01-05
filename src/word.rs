@@ -16,16 +16,12 @@ pub(crate) struct Word {
     #[validate(length(min = 1))]
     name: String,
     #[validate(length(min = 1))]
-    description: String,
+    summary: String,
 }
 
 impl Word {
-    pub fn new(key: String, name: String, description: String) -> Word {
-        Word {
-            key,
-            name,
-            description,
-        }
+    pub fn new(key: String, name: String, summary: String) -> Word {
+        Word { key, name, summary }
     }
 }
 
@@ -35,8 +31,8 @@ mod tests {
     use test_case::test_case;
     #[test_case("key", "name", "des")]
     #[test_case("k", "n", "d")]
-    fn validate_works(key: &str, name: &str, description: &str) -> Result<(), Error> {
-        let word = Word::new(key.to_string(), name.to_string(), description.to_string());
+    fn validate_works(key: &str, name: &str, summary: &str) -> Result<(), Error> {
+        let word = Word::new(key.to_string(), name.to_string(), summary.to_string());
         word.validate()?;
         Ok(())
     }
@@ -46,7 +42,7 @@ mod tests {
         "name",
         "",
         [
-            ("description",&vec![
+            ("summary",&vec![
                 validation_error("length",Option::None,&[
                     ("min",json!(1)),
                     ("value",json!("")),
@@ -86,10 +82,10 @@ mod tests {
     fn validte_error_works(
         key: &str,
         name: &str,
-        description: &str,
+        summary: &str,
         expected: HashMap<&str, &Vec<ValidationError>>,
     ) {
-        let word = Word::new(key.to_string(), name.to_string(), description.to_string());
+        let word = Word::new(key.to_string(), name.to_string(), summary.to_string());
         let result = word.validate();
         assert!(result.is_err());
         assert_eq!(expected, result.err().unwrap().field_errors());
