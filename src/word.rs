@@ -23,6 +23,17 @@ impl Word {
     pub fn new(key: String, name: String, summary: String) -> Word {
         Word { key, name, summary }
     }
+    pub fn key(&self) -> &str {
+        &self.key
+    }
+
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+
+    pub fn summary(&self) -> &str {
+        &self.summary
+    }
 }
 
 #[cfg(test)]
