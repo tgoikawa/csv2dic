@@ -1,7 +1,9 @@
 use crate::*;
 use async_std::fs::File;
 use async_std::io::{Read, Write};
+use async_std::path::Path;
 use async_std::prelude::*;
+use std::convert::AsRef;
 
 pub fn convert(src: &str) -> Result<String, Error> {
     let words = csv_src::read_csv(src)?;
@@ -21,6 +23,10 @@ where
     Ok(())
 }
 
-pub async fn convert_to_file(src: &str, dest: &str) -> Result<(), Error> {
-    convert_to(&mut File::open(src).await?, &mut File::create(dest).await?).await
+pub async fn convert_to_file<P: AsRef<Path>>(input: P, output: P) -> Result<(), Error> {
+    convert_to(
+        &mut File::open(input).await?,
+        &mut File::create(output).await?,
+    )
+    .await
 }
