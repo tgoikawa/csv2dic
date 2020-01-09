@@ -30,3 +30,39 @@ pub async fn convert_to_file<P: AsRef<Path>>(input: P, output: P) -> Result<(), 
     )
     .await
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use async_std::io::Cursor;
+    use test_case::test_case;
+
+    #[test_case(
+        include_str!("../resource/tests/given/convert/case1.csv"),
+        include_str!("../resource/tests/expects/dest/case1.md")
+        )]
+    #[test_case(
+        include_str!("../resource/tests/given/convert/case2.csv"),
+        include_str!("../resource/tests/expects/dest/case2.md")
+        )]
+    fn convert_works(src: &str, expected: &str) -> Result<(), Error> {
+        let actual = convert(src)?;
+        assert_eq!(expected, actual);
+        Ok(())
+    }
+    #[test_case(
+        include_str!("../resource/tests/given/convert/case1.csv"),
+        include_str!("../resource/tests/expects/dest/case1.md")
+        )]
+    #[test_case(
+        include_str!("../resource/tests/given/convert/case2.csv"),
+        include_str!("../resource/tests/expects/dest/case2.md")
+        )]
+    async fn convert_to_works(src: &str, expected: &str) -> Result<(), Error> {
+        let mut buffer = Vec::new();
+        let mut reader = Cursor::new(src);
+        convert_to(&mut reader, &mut buffer).await?;
+        assert_eq!(expected, String::from_utf8(buffer)?);
+        Ok(())
+    }
+}
