@@ -35,6 +35,7 @@ pub async fn convert_to_file<P: AsRef<Path>>(input: P, output: P) -> Result<(), 
 mod tests {
     use super::*;
     use async_std::io::Cursor;
+    use futures::executor::block_on;
     use test_case::test_case;
 
     #[test_case(
@@ -58,10 +59,10 @@ mod tests {
         include_str!("../resource/tests/given/convert/case2.csv"),
         include_str!("../resource/tests/expects/dest/case2.md")
         )]
-    async fn convert_to_works(src: &str, expected: &str) -> Result<(), Error> {
+    fn convert_to_works(src: &str, expected: &str) -> Result<(), Error> {
         let mut buffer = Vec::new();
         let mut reader = Cursor::new(src);
-        convert_to(&mut reader, &mut buffer).await?;
+        block_on(convert_to(&mut reader, &mut buffer))?;
         assert_eq!(expected, String::from_utf8(buffer)?);
         Ok(())
     }
