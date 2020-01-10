@@ -40,7 +40,7 @@ pub async fn convert_to_file<P: AsRef<Path>>(input: P, output: P) -> Result<(), 
 mod tests {
     use super::*;
     use async_std::io::Cursor;
-    use futures::executor::block_on;
+    use async_std::task::block_on;
     use test_case::test_case;
 
     #[test_case(
