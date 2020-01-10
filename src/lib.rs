@@ -1,8 +1,10 @@
-#![cfg(test)]
+#[cfg(test)]
 extern crate test_case;
+
 #[macro_use]
 extern crate validator_derive;
 
+#[cfg(test)]
 #[macro_use]
 extern crate serde_json;
 

@@ -1,10 +1,6 @@
-use crate::*;
 use regex::Regex;
 use serde::Deserialize;
-use serde_json::Value;
-use std::borrow::Cow;
-use std::collections::HashMap;
-use validator::{Validate, ValidationError};
+use validator::Validate;
 lazy_static! {
     static ref KEY_PATTERN: Regex = Regex::new(r"^[a-zA-Z0-9_]+$").unwrap();
 }
@@ -20,7 +16,8 @@ pub(crate) struct Word {
 }
 
 impl Word {
-    pub fn new(key: String, name: String, summary: String) -> Word {
+    #[cfg(test)]
+    pub(crate) fn new(key: String, name: String, summary: String) -> Word {
         Word { key, name, summary }
     }
     pub fn key(&self) -> &str {
@@ -39,7 +36,12 @@ impl Word {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::*;
+    use serde_json::Value;
+    use std::borrow::Cow;
+    use std::collections::HashMap;
     use test_case::test_case;
+    use validator::ValidationError;
     #[test_case("key", "name", "des")]
     #[test_case("k", "n", "d")]
     fn validate_works(key: &str, name: &str, summary: &str) -> Result<(), Error> {
