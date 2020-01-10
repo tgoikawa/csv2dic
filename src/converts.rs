@@ -4,9 +4,14 @@ use async_std::io::{Read, Write};
 use async_std::path::Path;
 use async_std::prelude::*;
 use std::convert::AsRef;
+use validator::Validate;
 
 pub fn convert(src: &str) -> Result<String, Error> {
     let words = csv_src::read_csv(src)?;
+    words
+        .iter()
+        .map(|word| word.validate())
+        .collect::<Result<Vec<_>, _>>()?;
     dest::render(&words, template::default())
 }
 
@@ -51,6 +56,18 @@ mod tests {
         assert_eq!(expected, actual);
         Ok(())
     }
+
+    #[test_case(
+        include_str!("../resource/tests/given/convert/error_case1.csv")
+        )]
+    #[test_case(
+        include_str!("../resource/tests/given/convert/error_case2.csv")
+        )]
+    fn convert_error_works(src: &str) {
+        let actual = convert(src);
+        assert!(actual.is_err());
+    }
+
     #[test_case(
         include_str!("../resource/tests/given/convert/case1.csv"),
         include_str!("../resource/tests/expects/dest/case1.md")
